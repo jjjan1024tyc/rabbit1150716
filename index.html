@@ -138,7 +138,8 @@
         .mini-tiger { 
             height: 45px; 
             object-fit: contain; 
-            animation: dropAndWobble 2.5s ease-in-out forwards; 
+            /* 將動畫時間從 2.5s 縮短到 1s，讓節奏更俐落 */
+            animation: dropAndWobble 1s ease-out forwards; 
             position: relative;
             z-index: 50;
         }
@@ -155,15 +156,12 @@
             100% { opacity: 0; transform: translate(50%, -30px) scale(1.8); } 
         }
         
-        /* 藥草包掉落與左右搖擺動畫 */
+        /* 藥草包掉落與左右搖擺動畫 (取消中間停留，直接縮小降落) */
         @keyframes dropAndWobble {
-            0%   { transform: translateY(-40vh) scale(10); opacity: 0; }
-            10%  { transform: translateY(-40vh) scale(10); opacity: 1; }
-            40%  { transform: translateY(-40vh) scale(10); opacity: 1; }
-            70%  { transform: translateY(0) scale(1); }
+            0%   { transform: translateY(-40vh) scale(6); opacity: 0; }
+            20%  { transform: translateY(-20vh) scale(4); opacity: 1; }
+            60%  { transform: translateY(0) scale(1); }
             75%  { transform: rotate(-20deg); }
-            80%  { transform: rotate(20deg); }
-            85%  { transform: rotate(-20deg); }
             90%  { transform: rotate(20deg); }
             100% { transform: rotate(0deg); }
         }
@@ -194,6 +192,8 @@
         <!-- 更換為單次重擊音效 -->
         <audio id="snd-global-hit" src="https://assets.mixkit.co/active_storage/sfx/2568/2568-preview.mp3" preload="auto"></audio>
         <audio id="snd-cheer" src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" preload="auto"></audio>
+        <!-- 新增獲得藥草包時的清脆獎勵音效 -->
+        <audio id="snd-reward" src="https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3" preload="auto"></audio>
     </div>
 
     <div id="battlefield">
@@ -371,6 +371,12 @@
             const cheer = document.getElementById('snd-cheer');
             cheer.volume = 0;
             cheer.play().then(() => { cheer.pause(); cheer.currentTime = 0; cheer.volume = 1.0; }).catch(e => {});
+
+            // 解鎖獎勵音效
+            const rewardSnd = document.getElementById('snd-reward');
+            rewardSnd.volume = 0;
+            rewardSnd.play().then(() => { rewardSnd.pause(); rewardSnd.currentTime = 0; rewardSnd.volume = 1.0; }).catch(e => {});
+
             audioUnlocked = true;
         }
 
@@ -516,6 +522,15 @@
                 
                 // 每達到 5 的倍數，發放一個對應順序的藥草包 (最高到30次，共6包)
                 if (p.score % 5 === 0 && p.score <= 30) {
+                    
+                    // 播放得到藥草包的獎勵音效
+                    if (audioUnlocked) {
+                        const rewardSnd = document.getElementById('snd-reward');
+                        const clonedRewardSnd = rewardSnd.cloneNode();
+                        clonedRewardSnd.volume = 1.0;
+                        clonedRewardSnd.play().catch(e => console.log(e));
+                    }
+
                     const bagIndex = (p.score / 5) - 1;
                     const trophy = document.createElement('img');
                     trophy.src = bagImages[bagIndex];
