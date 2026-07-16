@@ -138,8 +138,8 @@
         .mini-tiger { 
             height: 45px; 
             object-fit: contain; 
-            /* 將動畫時間從 2.5s 縮短到 1s，讓節奏更俐落 */
-            animation: dropAndWobble 1s ease-out forwards; 
+            /* 總時間 1.5s：前 33% (0.5s) 停留，後面縮小掉落與搖擺 */
+            animation: dropAndWobble 1.5s ease-in-out forwards; 
             position: relative;
             z-index: 50;
         }
@@ -156,13 +156,15 @@
             100% { opacity: 0; transform: translate(50%, -30px) scale(1.8); } 
         }
         
-        /* 藥草包掉落與左右搖擺動畫 (取消中間停留，直接縮小降落) */
+        /* 藥草包先在高度 30% 的位置大大的停留 0.5 秒，再移動到收集區 */
         @keyframes dropAndWobble {
-            0%   { transform: translateY(-40vh) scale(6); opacity: 0; }
-            20%  { transform: translateY(-20vh) scale(4); opacity: 1; }
-            60%  { transform: translateY(0) scale(1); }
-            75%  { transform: rotate(-20deg); }
-            90%  { transform: rotate(20deg); }
+            0%   { transform: translateY(-30vh) scale(0); opacity: 0; }
+            10%  { transform: translateY(-30vh) scale(6); opacity: 1; } /* 瞬間彈出放大 */
+            33%  { transform: translateY(-30vh) scale(6); opacity: 1; } /* 停留直到 0.5 秒 (1.5s 的 33%) */
+            66%  { transform: translateY(0) scale(1); opacity: 1; }     /* 縮小並移動至下方的收集區 */
+            75%  { transform: rotate(-25deg); }                         /* 開始左右搖擺 */
+            85%  { transform: rotate(25deg); }
+            95%  { transform: rotate(-10deg); }
             100% { transform: rotate(0deg); }
         }
 
@@ -273,7 +275,6 @@
     <footer>Taoyuan City Jianguo Junior High School Teacher Chan Chih Chieh (2026)</footer>
     <div id="timeDisplay" class="time-info"></div>
 
-    <!-- 這是剛剛遺失的 script 標籤，非常重要！ -->
     <script>
         const UART_SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
         const TX_CHARACTERISTIC_UUID = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
@@ -333,7 +334,7 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
-            document.getElementById('timeDisplay').innerText = `最後修改：${year}-${month}-${date} ${hours}:${minutes}:${seconds} (修復畫面破圖問題)`;
+            document.getElementById('timeDisplay').innerText = `最後修改：${year}-${month}-${date} ${hours}:${minutes}:${seconds} (修改藥草包掉落動畫)`;
         }
 
         function setPlayerCount(num, doUnlock = true) {
