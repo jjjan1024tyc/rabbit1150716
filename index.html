@@ -261,7 +261,7 @@
         </div>
     </div>
 
-    <footer>Taoyuan City Jianguo Junior High School Teacher Chan Chih Chieh (2026)</footer>
+    <footer></footer>
     <div id="timeDisplay" class="time-info"></div>
 
     <script>
@@ -314,7 +314,7 @@
             const minutes = String(now.getMinutes()).padStart(2, '0');
             const seconds = String(now.getSeconds()).padStart(2, '0');
             
-            document.getElementById('timeDisplay').innerText = `最後修改：${year}-${month}-${date} ${hours}:${minutes}:${seconds} (套用專屬底色)`;
+            document.getElementById('timeDisplay').innerText = `最後修改：${year}-${month}-${date} ${hours}:${minutes}:${seconds} `;
         }
 
         function setPlayerCount(num, doUnlock = true) {
